@@ -1,0 +1,6 @@
+dependencies {
+    implementation project(':module-repository')
+
+    implementation 'org.modelmapper:modelmapper:3.0.0'
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
+}
