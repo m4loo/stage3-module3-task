@@ -7,8 +7,11 @@ import com.mjc.school.menu.Buttons;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
+import static java.lang.System.in;
 import static java.lang.System.out;
 
 @Component
@@ -28,7 +31,7 @@ public class NewsMenuPrinter implements BaseMenuPrinter<NewsController> {
         out.println(Buttons.ConstantsString.OPERATIONS + Buttons.READ_BY_ID_NEWS.getButtonMessage());
         out.println(Buttons.ConstantsString.ENTER_NEWS_ID);
         String newsId = input.nextLine();
-        newsCommandHandler.createRequest(newsId, null, null, null);
+        newsCommandHandler.createRequest(newsId, null, null, null, null);
         out.println(newsCommandHandler.handleCommand(controller, Buttons.READ_BY_ID_NEWS.name()));
     }
 
@@ -41,7 +44,21 @@ public class NewsMenuPrinter implements BaseMenuPrinter<NewsController> {
         String content = input.nextLine();
         out.println(Buttons.ConstantsString.ENTER_AUTHOR_ID);
         String authorId = input.nextLine();
-        newsCommandHandler.createRequest(null, title, content, authorId);
+
+        List<String> tagList;
+        out.println(Buttons.ConstantsString.TAG_ENTER_QUESTION);
+        if (input.nextLine().equals("y")) {
+            out.println(Buttons.ConstantsString.TAG_ENTER_INFO);
+            tagList = new ArrayList<>();
+            String tagId = "";
+            while (!tagId.equals("done")) {
+                out.println(Buttons.ConstantsString.ENTER_TAG_ID);
+                tagId = input.nextLine();
+                tagList.add(tagId);
+            }
+        } else tagList = null;
+
+        newsCommandHandler.createRequest(null, title, content, authorId, tagList);
         out.println(newsCommandHandler.handleCommand(controller, Buttons.CREATE_NEWS.name()));
     }
 
@@ -56,7 +73,21 @@ public class NewsMenuPrinter implements BaseMenuPrinter<NewsController> {
         String content = input.nextLine();
         out.println(Buttons.ConstantsString.ENTER_AUTHOR_ID);
         String authorId = input.nextLine();
-        newsCommandHandler.createRequest(newsId, title, content, authorId);
+
+        List<String> tagList;
+        out.println(Buttons.ConstantsString.TAG_ENTER_QUESTION);
+        if (input.nextLine().equals("y")) {
+            out.println(Buttons.ConstantsString.TAG_ENTER_INFO);
+            tagList = new ArrayList<>();
+            String tagId = "";
+            while (!tagId.equals("done")) {
+                out.println(Buttons.ConstantsString.ENTER_TAG_ID);
+                tagId = input.nextLine();
+                tagList.add(tagId);
+            }
+        } else tagList = null;
+
+        newsCommandHandler.createRequest(newsId, title, content, authorId, tagList);
         out.println(newsCommandHandler.handleCommand(controller, Buttons.UPDATE_NEWS.name()));
     }
 
@@ -64,7 +95,7 @@ public class NewsMenuPrinter implements BaseMenuPrinter<NewsController> {
     public void printDeleteByIdMenu(NewsController controller, Scanner input) {
         out.println(Buttons.ConstantsString.OPERATIONS + Buttons.DELETE_BY_ID_NEWS.getButtonMessage());
         out.println(Buttons.ConstantsString.ENTER_NEWS_ID);
-        newsCommandHandler.createRequest(input.nextLine(), null, null, null);
+        newsCommandHandler.createRequest(input.nextLine(), null, null, null, null);
         out.println(newsCommandHandler.handleCommand(controller, Buttons.DELETE_BY_ID_NEWS.name()));
     }
 

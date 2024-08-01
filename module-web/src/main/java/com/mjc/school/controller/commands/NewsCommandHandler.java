@@ -2,7 +2,7 @@ package com.mjc.school.controller.commands;
 
 import com.mjc.school.controller.annotations.CommandHandler;
 import com.mjc.school.controller.implementation.NewsController;
-import com.mjc.school.service.annotation.ValidateDto;
+import com.mjc.school.service.annotation.ValidateNewsDto;
 import com.mjc.school.service.aspects.ValidationAspect;
 import com.mjc.school.service.dto.news.NewsDTORequest;
 import com.mjc.school.service.dto.news.NewsDTORespond;
@@ -12,6 +12,7 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
@@ -58,13 +59,21 @@ public class NewsCommandHandler implements BaseCommandHandler<NewsController, Ne
         return "";
     }
 
-    @ValidateDto
-    public void createRequest(String newsId, String title, String content, String authorId) {
+    @ValidateNewsDto
+    public void createRequest(String newsId, String title, String content, String authorId, List<String> tagIdList) {
         boolean isValid = ValidationAspect.isValid();
         if (isValid) {
             Long authorIdLong = (authorId == null) ? null : Long.parseLong(authorId);
             Long newsIdLong = (newsId == null) ? null : Long.parseLong(newsId);
-            newsDTORequest = new NewsDTORequest(newsIdLong, title, content, authorIdLong);
+            List<Long> tagIdListLong;
+            if (tagIdList == null)
+                tagIdListLong = null;
+            else {
+                tagIdListLong = new ArrayList<>();
+                for (String tagId : tagIdList)
+                    tagIdListLong.add(Long.parseLong(tagId));
+            }
+            newsDTORequest = new NewsDTORequest(newsIdLong, title, content, authorIdLong, tagIdListLong);
         }
     }
 
@@ -77,6 +86,7 @@ public class NewsCommandHandler implements BaseCommandHandler<NewsController, Ne
                     + ", createDate=" + newsDTORespond.getCreatedDate()
                     + ", lastUpdatedDate=" + newsDTORespond.getLastUpdatedDate()
                     + ", authorId=" + newsDTORespond.getAuthorId()
+                    + ", tags=" + newsDTORespond.getTagIdList()
                     + "]";
         return "";
     }

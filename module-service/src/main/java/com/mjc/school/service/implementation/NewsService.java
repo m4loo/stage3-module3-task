@@ -11,18 +11,24 @@ import com.mjc.school.service.exceptions.NotFoundException;
 import com.mjc.school.service.mapper.NewsMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class NewsService implements BaseService<NewsDTORequest, NewsDTORespond, Long> {
 
     private final NewsRepository newsRepository;
-    private final NewsMapper newsMapper;
+    private final NewsMapper newsMapper = new NewsMapper();
     private final AuthorRepository authorRepository;
+
+    @Autowired
+    public NewsService(NewsRepository newsRepository, AuthorRepository authorRepository) {
+        this.newsRepository = newsRepository;
+        this.authorRepository = authorRepository;
+    }
 
     @Override
     public List<NewsDTORespond> readAll() {
@@ -58,7 +64,7 @@ public class NewsService implements BaseService<NewsDTORequest, NewsDTORespond, 
                 return newsMapper.convertModelToDTO(newsModel);
             } else
                 throw new NotFoundException(ExceptionService.ERROR_NOT_EXIST.getErrorInfo(
-                    ExceptionService.Constants.AUTHOR,
+                        ExceptionService.Constants.AUTHOR,
                         createRequest.getAuthorId()));
         } catch (NotFoundException e) {
             System.out.println(e.getErrorMessage());

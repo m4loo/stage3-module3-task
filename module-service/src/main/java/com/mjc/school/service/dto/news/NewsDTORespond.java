@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -18,4 +19,5 @@ public class NewsDTORespond {
     private LocalDateTime createdDate;
     private LocalDateTime lastUpdatedDate;
     private Long authorId;
+    private List<Long> tagIdList;
 }

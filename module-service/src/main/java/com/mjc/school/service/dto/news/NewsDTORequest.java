@@ -3,6 +3,8 @@ package com.mjc.school.service.dto.news;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.List;
+
 @AllArgsConstructor
 @Getter
 public class NewsDTORequest {
@@ -10,4 +12,5 @@ public class NewsDTORequest {
     private String title;
     private String content;
     private Long authorId;
+    private List<Long> tagIdList;
 }

@@ -5,9 +5,9 @@ import com.mjc.school.controller.annotations.CommandBody;
 import com.mjc.school.controller.annotations.CommandHandler;
 import com.mjc.school.controller.annotations.CommandParam;
 import com.mjc.school.controller.commands.CommandType;
-import com.mjc.school.service.dto.author.AuthorDTORequest;
-import com.mjc.school.service.dto.author.AuthorDTOResponse;
-import com.mjc.school.service.implementation.AuthorService;
+import com.mjc.school.service.dto.tag.TagDTORequest;
+import com.mjc.school.service.dto.tag.TagDTORespond;
+import com.mjc.school.service.implementation.TagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,42 +15,42 @@ import org.springframework.stereotype.Controller;
 import java.util.List;
 
 @Controller
-public class AuthorController implements BaseController<AuthorDTORequest, AuthorDTOResponse, Long> {
+public class TagController implements BaseController<TagDTORequest, TagDTORespond, Long> {
 
-    private final AuthorService authorService;
+    private final TagService tagService;
 
     @Autowired
-    public AuthorController(AuthorService authorService) {
-        this.authorService = authorService;
+    public TagController(TagService tagService) {
+        this.tagService = tagService;
     }
 
     @CommandHandler(value = CommandType.READ_ALL)
     @Override
-    public List<AuthorDTOResponse> readAll() {
-        return authorService.readAll();
+    public List<TagDTORespond> readAll() {
+        return tagService.readAll();
     }
 
     @CommandHandler(value = CommandType.READ_BY_ID)
     @Override
-    public AuthorDTOResponse readById(@CommandParam Long id) {
-        return authorService.readById(id);
+    public TagDTORespond readById(@CommandParam Long id) {
+        return tagService.readById(id);
     }
 
     @CommandHandler(value = CommandType.CREATE)
     @Override
-    public AuthorDTOResponse create(@CommandBody AuthorDTORequest createRequest) {
-        return authorService.create(createRequest);
+    public TagDTORespond create(@CommandBody TagDTORequest createRequest) {
+        return tagService.create(createRequest);
     }
 
     @CommandHandler(value = CommandType.UPDATE)
     @Override
-    public AuthorDTOResponse update(@CommandBody AuthorDTORequest updateRequest) {
-        return authorService.update(updateRequest);
+    public TagDTORespond update(@CommandBody TagDTORequest updateRequest) {
+        return tagService.update(updateRequest);
     }
 
     @CommandHandler(value = CommandType.DELETE_BY_ID)
     @Override
     public boolean deleteById(@CommandParam Long id) {
-        return authorService.deleteById(id);
+        return tagService.deleteById(id);
     }
 }

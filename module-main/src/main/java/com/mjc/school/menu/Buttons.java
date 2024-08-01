@@ -16,6 +16,12 @@ public enum Buttons {
     UPDATE_AUTHOR(9, ConstantsString.UPDATE),
     DELETE_BY_ID_AUTHOR(10, ConstantsString.DELETE_BY_ID),
 
+    READ_ALL_TAGS(11, ConstantsString.READ_ALL),
+    READ_BY_ID_TAGS(12, ConstantsString.READ_BY_ID),
+    CREATE_TAG(13, ConstantsString.CREATE),
+    UPDATE_TAG(14, ConstantsString.UPDATE),
+    DELETE_BY_ID_TAG(15, ConstantsString.DELETE_BY_ID),
+
     EXIT(0, "Exit.");
 
     private final String message;
@@ -35,6 +41,14 @@ public enum Buttons {
             this.message = buttonId + " - "
                     + buttonMessage.replace(entity, "author");
             this.buttonMessage = buttonMessage.replace(entity, "author");
+        } else if (buttonId == 11) {
+            this.message = buttonId + " - "
+                    + buttonMessage.replace(entity, "tags");
+            this.buttonMessage = buttonMessage.replace(entity, "tags");
+        } else if (buttonId > 11 && buttonId <= 15) {
+            this.message = buttonId + " - "
+                    + buttonMessage.replace(entity, "tag");
+            this.buttonMessage = buttonMessage.replace(entity, "tag");
         } else {
             this.message = buttonId + " - " + buttonMessage;
             this.buttonMessage = buttonMessage;
@@ -61,5 +75,10 @@ public enum Buttons {
 
         public static final String ENTER_AUTHOR_ID = "Enter author id:";
         public static final String ENTER_AUTHOR_NAME = "Enter author name:";
+
+        public static final String TAG_ENTER_QUESTION = "Do you want to add tags to this news?\ny - yes\neverything else - no";
+        public static final String TAG_ENTER_INFO = "You can add multiple tags\nEnter 'done' to complete";
+        public static final String ENTER_TAG_ID = "Enter tag id:";
+        public static final String ENTER_TAG_NAME = "Enter tag name:";
     }
 }

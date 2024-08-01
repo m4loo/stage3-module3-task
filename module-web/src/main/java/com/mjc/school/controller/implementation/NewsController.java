@@ -9,15 +9,20 @@ import com.mjc.school.service.dto.news.NewsDTORequest;
 import com.mjc.school.service.dto.news.NewsDTORespond;
 import com.mjc.school.service.implementation.NewsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
 
 @Controller
-@RequiredArgsConstructor
 public class NewsController implements BaseController<NewsDTORequest, NewsDTORespond, Long> {
 
     private final NewsService newsService;
+
+    @Autowired
+    public NewsController(NewsService newsService) {
+        this.newsService = newsService;
+    }
 
     @CommandHandler(value = CommandType.READ_ALL)
     @Override

@@ -1,5 +1,7 @@
 package com.mjc.school.service.exceptions;
 
+import lombok.Getter;
+
 public enum ExceptionService {
 
     ERROR_COMMAND_NOT_FOUND(Constants.ERROR_CODE_XXXX1, Constants.ERROR_COMMAND_NOT_FOUND),
@@ -8,16 +10,13 @@ public enum ExceptionService {
     ERROR_FORMAT(Constants.ERROR_CODE_XXX21, Constants.ERROR_FORMAT),
     ERROR_NOT_EXIST(Constants.ERROR_CODE_XXX31, Constants.ERROR_NOT_EXIST);
 
+    @Getter
     private final String errorInfo;
     private final String target = "{entity}";
 
     ExceptionService(String errorCode, String errorMessage) {
         this.errorInfo = Constants.ERROR_CODE + errorCode + " "
                 + Constants.ERROR_MESSAGE + errorMessage;
-    }
-
-    public String getErrorInfo() {
-        return this.errorInfo;
     }
 
     public String getErrorInfo(String entity) {
@@ -55,6 +54,7 @@ public enum ExceptionService {
 
         public static final String AUTHOR = "Author";
         public static final String NEWS = "News";
+        public static final String TAG = "Tag";
         public static final String TITLE = "title";
         public static final String CONTENT = "content";
         public static final String NAME = "name";

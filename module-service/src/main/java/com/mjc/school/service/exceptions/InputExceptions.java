@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public class InputExceptions extends Exception{
 
-private final String errorMessage;
+    private final String errorMessage;
 
     public InputExceptions (String errorInfo) {
         super (errorInfo);

@@ -1,7 +1,7 @@
 package com.mjc.school.repository.implementation;
 
 import com.mjc.school.repository.BaseRepository;
-import com.mjc.school.repository.model.NewsModel;
+import com.mjc.school.repository.model.TagModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -13,51 +13,51 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class NewsRepository implements BaseRepository<NewsModel, Long> {
+public class TagRepository implements BaseRepository<TagModel, Long> {
 
     @Autowired
-    public NewsRepository() {
+    public TagRepository() {
     }
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
-    public List<NewsModel> readAll() {
+    public List<TagModel> readAll() {
         return entityManager
-                .createQuery("SELECT n FROM NEWS n", NewsModel.class)
+                .createQuery("SELECT t FROM TAGS t", TagModel.class)
                 .getResultList();
     }
 
     @Override
-    public Optional<NewsModel> readById(Long id) {
+    public Optional<TagModel> readById(Long id) {
         return Optional.ofNullable(
                 entityManager
-                        .find(NewsModel.class, id));
+                        .find(TagModel.class, id));
     }
 
     @Override
     @Transactional
-    public NewsModel create(NewsModel newsModel) {
+    public TagModel create(TagModel tagModel) {
         entityManager
-                .persist(newsModel);
+                .persist(tagModel);
         return entityManager
-                .find(NewsModel.class, newsModel.getId());
+                .find(TagModel.class, tagModel.getId());
     }
 
     @Override
     @Transactional
-    public NewsModel update(NewsModel newsModel) {
-        entityManager
-                .merge(newsModel);
+    public TagModel update(TagModel tagModel) {
+        entityManager.merge(tagModel);
         return entityManager
-                .find(NewsModel.class, newsModel.getId());
+                .find(TagModel.class, tagModel.getId());
     }
 
     @Override
     @Transactional
     public boolean deleteById(Long id) {
-        return entityManager.createQuery("DELETE FROM NEWS n.id = :id")
+        return entityManager
+                .createQuery("DELETE FROM TAGS t WHERE t.id = :id")
                 .setParameter("id", id)
                 .executeUpdate() > 0;
     }
@@ -65,6 +65,6 @@ public class NewsRepository implements BaseRepository<NewsModel, Long> {
     @Override
     public boolean existById(Long id) {
         return entityManager
-                .find(NewsModel.class, id) != null;
+                .find(TagModel.class, id) != null;
     }
 }

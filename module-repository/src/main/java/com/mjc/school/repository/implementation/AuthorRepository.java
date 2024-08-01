@@ -2,64 +2,73 @@ package com.mjc.school.repository.implementation;
 
 import com.mjc.school.repository.BaseRepository;
 import com.mjc.school.repository.annotation.OnDelete;
-import com.mjc.school.repository.datasource.DataSource;
 import com.mjc.school.repository.model.AuthorModel;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-@RequiredArgsConstructor
 public class AuthorRepository implements BaseRepository<AuthorModel, Long> {
 
-    private final DataSource dataSource;
+    @Autowired
+    public AuthorRepository() {
+    }
+//    private EntityManagerFactory entityManagerFactory;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public List<AuthorModel> readAll() {
-        return dataSource.getAuthorModelList();
+        return entityManager
+                .createQuery("SELECT a FROM AUTHORS a", AuthorModel.class)
+                .getResultList();
     }
 
     @Override
     public Optional<AuthorModel> readById(Long id) {
-        return readAll()
-                .stream()
-                .filter(authorModel -> id.equals(authorModel.getId()))
-                .findAny();
+        return Optional.ofNullable(
+                entityManager
+                        .find(AuthorModel.class, id));
     }
 
     @Override
+    @Transactional
     public AuthorModel create(AuthorModel authorModel) {
-        List<Integer> listIndexAuthors = dataSource.getListIndexAuthor();
-        authorModel.setId(listIndexAuthors.size() + 1L);
-        dataSource.getListIndexAuthor().add(listIndexAuthors.size());
-        authorModel.setCreateDate(LocalDateTime.now());
-        authorModel.setLastUpdateDate(LocalDateTime.now());
-        readAll().add(authorModel);
-        return authorModel;
+        entityManager
+                .persist(authorModel);
+        return entityManager
+                .find(AuthorModel.class, authorModel.getId());
     }
 
     @Override
+    @Transactional
     public AuthorModel update(AuthorModel authorModel) {
-        authorModel.setLastUpdateDate(LocalDateTime.now());
-        readAll().set(Math.toIntExact(authorModel.getId() - 1), authorModel);
-        return authorModel;
+        entityManager
+                .merge(authorModel);
+        return entityManager
+                .find(AuthorModel.class, authorModel.getId());
     }
 
     @OnDelete
     @Override
+    @Transactional
     public boolean deleteById(Long id) {
-        return readById(id)
-                .map(newsModel -> readAll().remove(newsModel))
-                .orElse(false);
+        return entityManager
+                .createQuery("DELETE FROM AUTHORS a WHERE a.id = :id")
+                .setParameter("id", id)
+                .executeUpdate() > 0;
     }
 
     @Override
     public boolean existById(Long id) {
-        return readAll()
-                .stream()
-                .anyMatch(authorModel -> id.equals(authorModel.getId()));
+        return entityManager
+                .find(AuthorModel.class, id) != null;
     }
 }

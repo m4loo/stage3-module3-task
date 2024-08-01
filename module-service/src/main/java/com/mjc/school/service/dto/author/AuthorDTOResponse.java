@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthorDTORespond {
+public class AuthorDTOResponse {
     private Long id;
     private String name;
     private LocalDateTime createDate;

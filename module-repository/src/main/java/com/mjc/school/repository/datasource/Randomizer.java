@@ -2,6 +2,7 @@ package com.mjc.school.repository.datasource;
 
 import com.mjc.school.repository.constants.Constants;
 import com.mjc.school.repository.model.AuthorModel;
+import com.mjc.school.repository.model.TagModel;
 import lombok.SneakyThrows;
 
 import java.io.BufferedReader;
@@ -20,6 +21,10 @@ public class Randomizer {
         return random.nextLong(authorModelList.size() + 1L);
     }
 
+    public Long getRandomTagId(List<TagModel> tagModelList) {
+        return random.nextLong(tagModelList.size() + 1L);
+    }
+
     public String getRandomTitle() {
         return getRandomLineFromFile(Constants.TITLE_FILE);
     }
@@ -29,7 +34,7 @@ public class Randomizer {
     }
 
     @SneakyThrows
-    public String getRandomLineFromFile(String fileName){
+    public String getRandomLineFromFile(String fileName) {
         InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName);
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
         List<String> list = bufferedReader.lines().toList();

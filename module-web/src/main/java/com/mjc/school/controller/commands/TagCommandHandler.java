@@ -1,11 +1,11 @@
 package com.mjc.school.controller.commands;
 
 import com.mjc.school.controller.annotations.CommandHandler;
-import com.mjc.school.controller.implementation.AuthorController;
-import com.mjc.school.service.annotation.ValidateAuthorDto;
+import com.mjc.school.controller.implementation.TagController;
+import com.mjc.school.service.annotation.ValidateTagDto;
 import com.mjc.school.service.aspects.ValidationAspect;
-import com.mjc.school.service.dto.author.AuthorDTORequest;
-import com.mjc.school.service.dto.author.AuthorDTOResponse;
+import com.mjc.school.service.dto.tag.TagDTORequest;
+import com.mjc.school.service.dto.tag.TagDTORespond;
 import com.mjc.school.service.exceptions.ExceptionService;
 import com.mjc.school.service.exceptions.NotFoundException;
 import lombok.SneakyThrows;
@@ -17,14 +17,14 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @Component
-public class AuthorCommandHandler implements BaseCommandHandler<AuthorController, AuthorDTOResponse> {
+public class TagCommandHandler implements BaseCommandHandler<TagController, TagDTORespond> {
 
-    AuthorDTORequest authorDTORequest;
+    TagDTORequest tagDTORequest;
 
     @Override
     @SuppressWarnings("unchecked")
     @SneakyThrows
-    public String handleCommand(AuthorController controller, String buttonName) {
+    public String handleCommand(TagController controller, String buttonName) {
         boolean isValid = ValidationAspect.isValid();
         if (isValid) {
             CommandType commandType = Arrays.stream(CommandType.values())
@@ -40,11 +40,11 @@ public class AuthorCommandHandler implements BaseCommandHandler<AuthorController
             try {
                 if (method != null) {
                     return switch (commandType) {
-                        case READ_ALL -> toString((List<AuthorDTOResponse>) method.invoke(controller));
+                        case READ_ALL -> toString((List<TagDTORespond>) method.invoke(controller));
                         case READ_BY_ID ->
-                                toString((AuthorDTOResponse) method.invoke(controller, authorDTORequest.getId())) + "\n";
-                        case CREATE, UPDATE -> toString((AuthorDTOResponse) method.invoke(controller, authorDTORequest));
-                        case DELETE_BY_ID -> (boolean) method.invoke(controller, authorDTORequest.getId()) + "\n";
+                                toString((TagDTORespond) method.invoke(controller, tagDTORequest.getId())) + "\n";
+                        case CREATE, UPDATE -> toString((TagDTORespond) method.invoke(controller, tagDTORequest));
+                        case DELETE_BY_ID -> (boolean) method.invoke(controller, tagDTORequest.getId()) + "\n";
                     };
                 } else throw new NotFoundException(ExceptionService.ERROR_COMMAND_NOT_FOUND.getErrorInfo());
             } catch (NotFoundException e) {
@@ -55,35 +55,33 @@ public class AuthorCommandHandler implements BaseCommandHandler<AuthorController
         return "";
     }
 
-    @ValidateAuthorDto
-    public void createRequest(String authorId, String authorName) {
+    @ValidateTagDto
+    public void createRequest(String tagId, String tagName) {
         boolean isValid = ValidationAspect.isValid();
         if (isValid) {
-            if (authorId == null)
-                authorDTORequest = new AuthorDTORequest(null, authorName);
+            if (tagId == null)
+                tagDTORequest = new TagDTORequest(null, tagName);
             else {
-                Long id = Long.parseLong(authorId);
-                authorDTORequest = new AuthorDTORequest(id, authorName);
+                Long id = Long.parseLong(tagId);
+                tagDTORequest = new TagDTORequest(id, tagName);
             }
         }
     }
 
     @Override
-    public String toString(AuthorDTOResponse authorDTORespond) {
-        if (authorDTORespond != null)
-            return "AuthorDtoResponse[id=" + authorDTORespond.getId()
-                    + ", name=" + authorDTORespond.getName()
-                    + ", createDate=" + authorDTORespond.getCreateDate()
-                    + ", lastUpdatedDate=" + authorDTORespond.getLastUpdateDate()
+    public String toString(TagDTORespond tagDTORespond) {
+        if (tagDTORespond != null)
+            return "TagDtoResponse[id=" + tagDTORespond.getId()
+                    + ", name=" + tagDTORespond.getName()
                     + "]";
         return "";
     }
 
     @Override
-    public String toString(List<AuthorDTOResponse> authorDTORespondList) {
+    public String toString(List<TagDTORespond> respondList) {
         StringBuilder result = new StringBuilder();
-        for (AuthorDTOResponse authorDTORespond : authorDTORespondList)
-            result.append(toString(authorDTORespond)).append("\n");
+        for (TagDTORespond tagDTORespond : respondList)
+            result.append(toString(tagDTORespond)).append("\n");
         return result.toString();
     }
 }
