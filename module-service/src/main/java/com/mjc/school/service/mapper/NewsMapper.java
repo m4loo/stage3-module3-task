@@ -1,60 +1,60 @@
 package com.mjc.school.service.mapper;
 
-import com.mjc.school.repository.model.AuthorModel;
-import com.mjc.school.repository.model.NewsModel;
-import com.mjc.school.repository.model.TagModel;
-import com.mjc.school.service.dto.news.NewsDTORequest;
-import com.mjc.school.service.dto.news.NewsDTORespond;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Component;
+import com.mjc.school.repository.model.impl.NewsModel;
+import com.mjc.school.repository.model.impl.TagModel;
+import com.mjc.school.service.dto.NewsDtoRequest;
+import com.mjc.school.service.dto.NewsDtoResponse;
+import org.mapstruct.Mapper;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
+import org.mapstruct.factory.Mappers;
+
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
-public class NewsMapper implements BaseMapper<NewsDTORespond, NewsModel, NewsDTORequest>{
 
-    @PersistenceContext
-    EntityManager entityManager;
+@Mapper(componentModel = "spring",uses = {TagMapper.class, AuthorMapper.class})
+public interface NewsMapper {
+    NewsMapper INSTANCE = Mappers.getMapper(NewsMapper.class);
 
-    @Override
-    public NewsDTORespond convertModelToDTO(NewsModel newsModel) {
-        NewsDTORespond newsDTORespond = new NewsDTORespond();
-        newsDTORespond.setNewsId(newsModel.getId());
-        newsDTORespond.setTitle(newsModel.getTitle());
-        newsDTORespond.setContent(newsModel.getContent());
-        newsDTORespond.setAuthorId(newsModel.getAuthorModel().getId());
-        newsDTORespond.setTagIdList(entityManager.createQuery("SELECT id FROM TAGS", Long.class).getResultList());
-        return newsDTORespond;
-    }
+    @Mapping(target = "createDate", ignore = true)
+    @Mapping(target = "lastUpdateDate", ignore = true)
+    @Mapping(target = "author.id", source = "authorId")
+    @Mapping(source = "tagsId", target = "tags", qualifiedByName = "tagModelFromTagId")
+    NewsModel newsFromDtoRequest(NewsDtoRequest request);
 
-    @Override
-    public NewsModel convertDTOtoModel(NewsDTORequest newsDTORequests) {
-        NewsModel newsModel = new NewsModel();
-        newsModel.setId(newsDTORequests.getNewsId());
-        newsModel.setTitle(newsDTORequests.getTitle());
-        newsModel.setContent(newsDTORequests.getContent());
-        newsModel.setAuthorModel(entityManager.find(AuthorModel.class, newsDTORequests.getAuthorId()));
-
-        List<Long> tagIdList = newsDTORequests.getTagIdList();
-        List<TagModel> tagModelList = entityManager
-                .createQuery("SELECT t FROM TAGS t WHERE t.id IN :tagIdList", TagModel.class)
-                .setParameter("tagIdList", tagIdList)
-                .getResultList();
-
-        newsModel.setTagModelList(tagModelList);
-        return newsModel;
-    }
-
-    @Override
-    public List<NewsDTORespond> convertMoledListToDTOList(List<NewsModel> newsModelList) {
-        List<NewsDTORespond> newsDTORespondList = new ArrayList<>();
-        for (NewsModel newsModel : newsModelList){
-            NewsDTORespond newsDTORespond = convertModelToDTO(newsModel);
-            newsDTORespondList.add(newsDTORespond);
+    @Named("tagModelFromTagId")
+    default List<TagModel> tagModelFormTagId(List<Long> tagIdList) {
+        List<TagModel> tags = new ArrayList<>();
+        if (tagIdList != null) {
+            tagIdList.stream().forEach(
+                    o -> {
+                        TagModel tag = new TagModel();
+                        tag.setId(o);
+                        tags.add(tag);
+                    }
+            );
         }
-        return newsDTORespondList;
+        return tags;
+
     }
+    @Mapping(target = "authorId", source = "author.id")
+    @Mapping(target = "tagsId", source = "tags", qualifiedByName = "tagModelToTagId")
+    NewsDtoResponse newsToDtoResponse(NewsModel model);
+
+
+    @Named("tagModelToTagId")
+    default List<Long> tagModelToTagId(List<TagModel> tags){
+        List<Long> tagsListId = new ArrayList<>();
+        if(tags!= null){
+            tags.stream().forEach(
+                    o -> {
+                       tagsListId.add(o.getId());
+                    });
+        }
+        return tagsListId;
+    }
+
+
 }

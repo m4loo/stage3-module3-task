@@ -1,19 +1,22 @@
 package com.mjc.school;
 
-//import com.mjc.school.configuration.ProgramConfiguration;
-import com.mjc.school.menu.MenuHelper;
+
+import com.mjc.school.controller.view.Menu;
+
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+
 
 @SpringBootApplication
+@EnableJpaAuditing
+@EnableAspectJAutoProxy
 public class Main {
     public static void main(String[] args) {
-        try (var context = new AnnotationConfigApplicationContext("com.mjc.school")) {
-            context
-                    .getBean(MenuHelper.class)
-                    .printMainMenu();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        ApplicationContext applicationContext = SpringApplication.run(Main.class, args);
+        Menu menu = applicationContext.getBean(Menu.class);
+        menu.menuScreen();
     }
 }

@@ -1,39 +1,23 @@
 package com.mjc.school.service.mapper;
 
-import com.mjc.school.repository.model.AuthorModel;
-import com.mjc.school.service.dto.author.AuthorDTORequest;
-import com.mjc.school.service.dto.author.AuthorDTOResponse;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Component;
+import com.mjc.school.repository.model.impl.AuthorModel;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.mjc.school.service.dto.AuthorDtoRequest;
+import com.mjc.school.service.dto.AuthorDtoResponse;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
+import org.mapstruct.factory.Mappers;
 
-@Component
-public class AuthorMapper implements BaseMapper<AuthorDTOResponse, AuthorModel, AuthorDTORequest> {
+@Mapper(componentModel = "spring")
+public interface AuthorMapper {
+    AuthorMapper INSTANCE = Mappers.getMapper(AuthorMapper.class);
 
-    ModelMapper modelMapper;
+    @Mappings(value = {@Mapping(target = "createDate", ignore = true),
+            @Mapping(target = "lastUpdateDate", ignore = true),
+            @Mapping(target = "news", ignore = true)})
+    AuthorModel authorFromDtoRequest(AuthorDtoRequest request);
 
-    public AuthorMapper() {
-        this.modelMapper = new ModelMapper();
-        this.modelMapper.getConfiguration().setSkipNullEnabled(true);
-    }
+    AuthorDtoResponse authorToDtoResponse(AuthorModel model);
 
-    @Override
-    public AuthorDTOResponse convertModelToDTO(AuthorModel authorModel) {
-        return modelMapper.map(authorModel, AuthorDTOResponse.class);
-    }
-
-    @Override
-    public AuthorModel convertDTOtoModel(AuthorDTORequest authorDTORequest) {
-        return modelMapper.map(authorDTORequest, AuthorModel.class);
-    }
-
-    @Override
-    public List<AuthorDTOResponse> convertMoledListToDTOList(List<AuthorModel> authorModelList) {
-        List<AuthorDTOResponse> authorDTORespondList = new ArrayList<>();
-        for (AuthorModel authorModel : authorModelList)
-            authorDTORespondList.add(convertModelToDTO(authorModel));
-        return authorDTORespondList;
-    }
 }

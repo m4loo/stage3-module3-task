@@ -20,33 +20,34 @@ subprojects {
 
     dependencies {
         implementation "org.springframework:spring-context:$springVersion"
-        implementation "org.springframework.boot:spring-boot-starter-data-jpa:2.7.7"
-        implementation "org.aspectj:aspectjrt:$aspectjVersion"
-        implementation "org.aspectj:aspectjweaver:$aspectjWeaverVersion"
-        implementation "org.postgresql:postgresql:42.2.20"
-        implementation "com.h2database:h2:2.1.214"
-        implementation "javax.xml.bind:jaxb-api:2.3.1"
+        implementation "org.springframework.boot:spring-boot-starter-data-jpa:$springBootStarter"
+        // https://mvnrepository.com/artifact/org.postgresql/postgresql
+        implementation "org.postgresql:postgresql:$postgresqlVersion"
+        // https://mvnrepository.com/artifact/com.h2database/h2
+        implementation 'com.h2database:h2:2.2.220'
+        // https://mvnrepository.com/artifact/org.aspectj/aspectjweaver
+        implementation 'org.aspectj:aspectjweaver:1.9.19'
+        // https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
+        implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
 
-        compileOnly "org.projectlombok:lombok:$lombokVersion"
-        annotationProcessor "org.projectlombok:lombok:$lombokVersion"
-
-        implementation "com.h2database:h2:$h2Version"
-
+        testImplementation "org.springframework.boot:spring-boot-starter-test:$springBootStarter"
         testImplementation "org.springframework:spring-test:$springVersion"
         testImplementation "org.junit.jupiter:junit-jupiter-api:$jupiterVersion"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$jupiterVersion"
-        testImplementation "com.tngtech.archunit:archunit-junit5:1.0.0"
+        testImplementation "com.tngtech.archunit:archunit-junit5:$archUnitVersion"
 
         annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
         implementation "org.mapstruct:mapstruct:$mapstructVersion"
+
+
+
     }
     test {
         useJUnitPlatform()
     }
 }
 
-tasks.register('repack', Jar) {
-    dependsOn ':module-main:build'
+task repack(type: Jar, dependsOn: ':module-main:build') {
     if (findProject(':module-main') != null) {
         entryCompression = ZipEntryCompression.STORED
         def buildJar = zipTree("${project(':module-main').buildDir}/libs/module-main.jar")

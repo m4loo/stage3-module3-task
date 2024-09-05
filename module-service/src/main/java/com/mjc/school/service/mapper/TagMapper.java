@@ -1,39 +1,18 @@
 package com.mjc.school.service.mapper;
 
-import com.mjc.school.repository.model.TagModel;
-import com.mjc.school.service.dto.tag.TagDTORequest;
-import com.mjc.school.service.dto.tag.TagDTORespond;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Component;
+import com.mjc.school.repository.model.impl.TagModel;
+import com.mjc.school.service.dto.TagDtoRequest;
+import com.mjc.school.service.dto.TagDtoResponse;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
+@Mapper(componentModel = "spring", uses = NewsMapper.class)
+public interface TagMapper {
+    TagMapper INSTANCE = Mappers.getMapper(TagMapper.class);
 
-import java.util.ArrayList;
-import java.util.List;
+    @Mapping(target = "news", ignore = true)
+    TagModel tagFromDtoRequest(TagDtoRequest request);
 
-@Component
-public class TagMapper implements BaseMapper<TagDTORespond, TagModel, TagDTORequest>{
 
-    ModelMapper modelMapper;
-
-    public TagMapper() {
-        this.modelMapper = new ModelMapper();
-        this.modelMapper.getConfiguration().setSkipNullEnabled(true);
-    }
-
-    @Override
-    public TagDTORespond convertModelToDTO(TagModel tagModel) {
-        return modelMapper.map(tagModel, TagDTORespond.class);
-    }
-
-    @Override
-    public TagModel convertDTOtoModel(TagDTORequest tagDTORequest) {
-        return modelMapper.map(tagDTORequest, TagModel.class);
-    }
-
-    @Override
-    public List<TagDTORespond> convertMoledListToDTOList(List<TagModel> tagModelList) {
-        List<TagDTORespond> tagDTORespondList = new ArrayList<>();
-        for (TagModel tagModel : tagModelList)
-            tagDTORespondList.add(convertModelToDTO(tagModel));
-        return tagDTORespondList;
-    }
+    TagDtoResponse tagToDtoResponse(TagModel tagModel);
 }
